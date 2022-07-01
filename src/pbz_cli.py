@@ -4,14 +4,19 @@ from typing import List, Optional
 import typer
 
 from db import Session
+from etl import etl_clients
 from models.raw import Raw
-from scraper import scrap_all_auctions, scrap_all_participants, scrap_categories, scrap_clients
+from scraper import (scrap_all_auctions, scrap_all_participants,
+                     scrap_categories, scrap_clients)
 
 app = typer.Typer()
 
 
 @app.command()
-def scrap(domain: str, use_proxy: bool = typer.Option(False), raw_type: Optional[List[str]] = typer.Option(None), updated_after: datetime = typer.Option(datetime(2000, 1, 1))):
+def scrap(domain: str, 
+        use_proxy: bool = typer.Option(False), 
+        raw_type: Optional[List[str]] = typer.Option(None), 
+        updated_after: datetime = typer.Option(datetime(2000, 1, 1))):
 
     if 'category' in raw_type:
         categories = scrap_categories(domain, use_proxy)
@@ -25,12 +30,12 @@ def scrap(domain: str, use_proxy: bool = typer.Option(False), raw_type: Optional
 
                 new_cat = Raw(
                     raw_type='category',
-                    raw_obj_id=cat_id,
+                    pbz_id=cat_id,
                     domain=domain,
                     body=cat
                 )
 
-                if not old_cat or old_cat.body != cat:  #; compare new and old JSON containing scrapped info
+                if not old_cat or old_cat.body != cat:  # ; compare new and old JSON containing scrapped info
                     session.add(new_cat)
 
                 session.commit()
@@ -46,7 +51,7 @@ def scrap(domain: str, use_proxy: bool = typer.Option(False), raw_type: Optional
 
                 new_cl = Raw(
                     raw_type='client',
-                    raw_obj_id=cl_id,
+                    pbz_id=cl_id,
                     domain=domain,
                     body=cl
                 )
@@ -64,8 +69,11 @@ def scrap(domain: str, use_proxy: bool = typer.Option(False), raw_type: Optional
 
 
 @app.command()
-def etl(sample: bool = False, form_type: Optional[List[str]] = typer.Option(None)):
-    typer.echo(f"Hello from etl. Please be patient...")
+def etl(domain: str,
+        use_proxy: bool = typer.Option(False),
+        raw_type: Optional[List[str]] = typer.Option(None),
+        updated_after: datetime = typer.Option(datetime(2000, 1, 1))):
+    etl_clients(domain, use_proxy, raw_type, updated_after)
 
 
 if __name__ == "__main__":
