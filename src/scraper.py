@@ -29,7 +29,7 @@ def scrap_all_participants(domain, updated_after, use_proxy):
 
     for client in clients:
         print('Scraping participants of client: {}'.format(client))
-        client_id = client.raw_obj_id
+        client_id = client.pbz_id
         participants = scrap_participants_per_client(domain, client_id, updated_after, use_proxy)
 
         for p in participants:
@@ -38,14 +38,22 @@ def scrap_all_participants(domain, updated_after, use_proxy):
                 domain, client_id, participant_id, use_proxy)
 
             with Session() as ins_session:
+                cp_raw = Raw(
+                    raw_type='client_participant',
+                    pbz_id=participant_id,
+                    domain=domain,
+                    body=p
+                )
+                ins_session.add(cp_raw)
+
                 p_raw = Raw(
                     raw_type='participant',
-                    raw_obj_id=participant_id,
+                    pbz_id=participant_id,
                     domain=domain,
                     body=p_detail
                 )
-
                 ins_session.add(p_raw)
+
                 ins_session.commit()
 
 
@@ -65,7 +73,7 @@ def scrap_all_auctions(domain, updated_after, use_proxy):
 
     for client in clients:
         print('Scraping auctions of client: {}'.format(client))
-        client_id = client.raw_obj_id
+        client_id = client.pbz_id
         auctions = scrap_auctions_per_client(domain, client_id, updated_after, use_proxy)
 
         for a in auctions:
@@ -73,12 +81,20 @@ def scrap_all_auctions(domain, updated_after, use_proxy):
             a_detail = scrap_auction_detail(domain, client_id, auction_id, use_proxy)
 
             with Session() as ins_session:
+                ca_raw = Raw(
+                    raw_type='client_auction',
+                    pbz_id=auction_id,
+                    domain=domain,
+                    body=a
+                )
+                ins_session.add(ca_raw)
+
                 a_raw = Raw(
                     raw_type='auction',
-                    raw_obj_id=auction_id,
+                    pbz_id=auction_id,
                     domain=domain,
                     body=a_detail
                 )
-
                 ins_session.add(a_raw)
+
                 ins_session.commit()
