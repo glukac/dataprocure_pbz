@@ -83,7 +83,7 @@ def scrap_all_auctions(domain, updated_after, use_proxy):
             with Session() as ins_session:
                 ca_raw = Raw(
                     raw_type='client_auction',
-                    pbz_id=auction_id,
+                    pbz_id=client_id,
                     domain=domain,
                     body=a
                 )
