@@ -21,7 +21,7 @@ class Raw(Base):
 
     raw_type = Column(String, nullable=False)
 
-    raw_obj_id = Column(Integer, nullable=False)
+    pbz_id = Column(Integer, nullable=False)
 
     domain = Column(String, nullable=False)
 
@@ -32,25 +32,25 @@ class Raw(Base):
     updated_at = Column(DateTime)
 
     @classmethod
-    def find_one(cls, domain, raw_type, raw_obj_id, session):
+    def find_one(cls, domain, raw_type, pbz_id, session):
         return session.query(cls).filter_by(
-            domain=domain, raw_type=raw_type, raw_obj_id=raw_obj_id).order_by(
+            domain=domain, raw_type=raw_type, pbz_id=pbz_id).order_by(
                 Raw.created_at.desc()
         ).first()
 
     @classmethod
     def find_all_distinct(cls, domain, raw_type, session):
-        return session.query(cls).distinct(cls.raw_obj_id).filter_by(
+        return session.query(cls).distinct(cls.pbz_id).filter_by(
             domain=domain,
             raw_type=raw_type
         ).order_by(
-            cls.raw_obj_id,
+            cls.pbz_id,
             cls.created_at.desc()
         ).all()
 
-    def __init__(self, raw_type, raw_obj_id, domain, body) -> None:
+    def __init__(self, raw_type, pbz_id, domain, body) -> None:
         self.raw_type = raw_type
-        self.raw_obj_id = raw_obj_id
+        self.pbz_id = pbz_id
         self.domain = domain
         self.body = body
         self.created_at = datetime.now()
