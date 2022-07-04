@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+import sys
 
 from domains_config import DOMAINS
 
@@ -19,51 +20,111 @@ class RequestMaker:
             self.kwargs['proxies'] = proxies
 
     def get_categories(self):
-        resp = requests.get('{domain_url}/api/categories?token={token}'.format(
-            domain_url=self.domain_url,
-            token=self.token), **self.kwargs)
+        try:
+            resp = requests.get('{domain_url}/api/categories?token={token}'.format(
+                domain_url=self.domain_url,
+                token=self.token), **self.kwargs)
 
-        return resp.json()
+            resp.raise_for_status()
+        except requests.HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+            print(resp.json())
+            sys.exit(1)
+        except Exception as err:
+            print(f'Other error occurred: {err}')
+            sys.exit(1)
+        else:
+            return resp.json()
 
     def get_clients(self):
-        resp = requests.get('{domain_url}/api/clients?token={token}'.format(
-            domain_url=self.domain_url,
-            token=self.token), **self.kwargs)
+        try:
+            resp = requests.get('{domain_url}/api/clients?token={token}'.format(
+                domain_url=self.domain_url,
+                token=self.token), **self.kwargs)
 
-        return resp.json()
+            resp.raise_for_status()
+        except requests.HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+            print(resp.json())
+            sys.exit(1)
+        except Exception as err:
+            print(f'Other error occurred: {err}')
+            sys.exit(1)
+        else:
+            return resp.json()
 
     def get_participants(self, client_id, updated_after):
-        resp = requests.get('{domain_url}/api/clients/{client_id}/participants?token={token}&updatedAfter={updated_after}'.format(
-            domain_url=self.domain_url,
-            client_id=client_id,
-            token=self.token,
-            updated_after=updated_after), **self.kwargs)
+        try:
+            resp = requests.get('{domain_url}/api/clients/{client_id}/participants?token={token}&updatedAfter={updated_after}'.format(
+                domain_url=self.domain_url,
+                client_id=client_id,
+                token=self.token,
+                updated_after=updated_after), **self.kwargs)
 
-        return resp.json()
+            resp.raise_for_status()
+        except requests.HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+            print(resp.json())
+            sys.exit(1)
+        except Exception as err:
+            print(f'Other error occurred: {err}')
+            sys.exit(1)
+        else:
+            return resp.json()
 
     def get_participant_detail(self, client_id, participant_id):
-        resp = requests.get('{domain_url}/api/clients/{client_id}/participants/{participant_id}?token={token}'.format(
-            domain_url=self.domain_url,
-            client_id=client_id,
-            participant_id=participant_id,
-            token=self.token), **self.kwargs)
+        try:
+            resp = requests.get('{domain_url}/api/clients/{client_id}/participants/{participant_id}?token={token}'.format(
+                domain_url=self.domain_url,
+                client_id=client_id,
+                participant_id=participant_id,
+                token=self.token), **self.kwargs)
 
-        return resp.json()
+            resp.raise_for_status()
+        except requests.HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+            print(resp.json())
+            sys.exit(1)
+        except Exception as err:
+            print(f'Other error occurred: {err}')
+            sys.exit(1)
+        else:
+            return resp.json()
 
     def get_auctions(self, client_id, updated_after):
-        resp = requests.get('{domain_url}/api/clients/{client_id}/auctions?token={token}&updatedAfter={updated_after}'.format(
-            domain_url=self.domain_url,
-            client_id=client_id,
-            token=self.token,
-            updated_after=updated_after), **self.kwargs)
+        try:
+            resp = requests.get('{domain_url}/api/clients/{client_id}/auctions?token={token}&updatedAfter={updated_after}'.format(
+                domain_url=self.domain_url,
+                client_id=client_id,
+                token=self.token,
+                updated_after=updated_after), **self.kwargs)
 
-        return resp.json()
+            resp.raise_for_status()
+        except requests.HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+            print(resp.json())
+            sys.exit(1)
+        except Exception as err:
+            print(f'Other error occurred: {err}')
+            sys.exit(1)
+        else:
+            return resp.json()
 
     def get_auction_detail(self, client_id, auction_id):
-        resp = requests.get('{domain_url}/api/clients/{client_id}/auctions/{auction_id}?token={token}'.format(
-            domain_url=self.domain_url,
-            client_id=client_id,
-            auction_id=auction_id,
-            token=self.token), **self.kwargs)
+        try:
+            resp = requests.get('{domain_url}/api/clients/{client_id}/auctions/{auction_id}?token={token}'.format(
+                domain_url=self.domain_url,
+                client_id=client_id,
+                auction_id=auction_id,
+                token=self.token), **self.kwargs)
 
-        return resp.json()
+            resp.raise_for_status()
+        except requests.HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+            print(resp.json())
+            sys.exit(1)
+        except Exception as err:
+            print(f'Other error occurred: {err}')
+            sys.exit(1)
+        else:
+            return resp.json()
