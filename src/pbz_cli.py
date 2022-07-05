@@ -21,45 +21,47 @@ def scrap(domain: str,
     if 'category' in raw_type:
         categories = scrap_categories(domain, use_proxy)
 
-        with Session() as session:
-            for cat in categories:
-                cat_id = cat.get('id')
+        if categories:
+            with Session() as session:
+                for cat in categories:
+                    cat_id = cat.get('id')
 
-                old_cat = Raw.find_one(
-                    domain, 'category', cat_id, session)
+                    old_cat = Raw.find_one(
+                        domain, 'category', cat_id, session)
 
-                new_cat = Raw(
-                    raw_type='category',
-                    pbz_id=cat_id,
-                    domain=domain,
-                    body=cat
-                )
+                    new_cat = Raw(
+                        raw_type='category',
+                        pbz_id=cat_id,
+                        domain=domain,
+                        body=cat
+                    )
 
-                if not old_cat or old_cat.body != cat:  # ; compare new and old JSON containing scrapped info
-                    session.add(new_cat)
+                    if not old_cat or old_cat.body != cat:  # ; compare new and old JSON containing scrapped info
+                        session.add(new_cat)
 
-                session.commit()
+                    session.commit()
 
     if 'client' in raw_type:
         clients = scrap_clients(domain, use_proxy)
 
-        with Session() as session:
-            for cl in clients:
-                cl_id = cl.get('id')
+        if clients:
+            with Session() as session:
+                for cl in clients:
+                    cl_id = cl.get('id')
 
-                old_cl = Raw.find_one(domain, 'client', cl_id, session)
+                    old_cl = Raw.find_one(domain, 'client', cl_id, session)
 
-                new_cl = Raw(
-                    raw_type='client',
-                    pbz_id=cl_id,
-                    domain=domain,
-                    body=cl
-                )
+                    new_cl = Raw(
+                        raw_type='client',
+                        pbz_id=cl_id,
+                        domain=domain,
+                        body=cl
+                    )
 
-                if not old_cl or old_cl.body != cl:  # compare new and old JSON containing scrapped info
-                    session.add(new_cl)
+                    if not old_cl or old_cl.body != cl:  # compare new and old JSON containing scrapped info
+                        session.add(new_cl)
 
-                session.commit()
+                    session.commit()
 
     if 'participant' in raw_type:
         scrap_all_participants(domain, updated_after, use_proxy)

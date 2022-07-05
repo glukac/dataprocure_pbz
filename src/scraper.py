@@ -31,11 +31,16 @@ def scrap_all_participants(domain, updated_after, use_proxy):
         print('Scraping participants of client: {}'.format(client))
         client_id = client.pbz_id
         participants = scrap_participants_per_client(domain, client_id, updated_after, use_proxy)
+        if not participants:
+            continue
 
         for p in participants:
             participant_id = p.get('id')
             p_detail = scrap_participant_detail(
                 domain, client_id, participant_id, use_proxy)
+
+            if not p_detail:
+                continue
 
             with Session() as ins_session:
                 cp_raw = Raw(
@@ -75,10 +80,14 @@ def scrap_all_auctions(domain, updated_after, use_proxy):
         print('Scraping auctions of client: {}'.format(client))
         client_id = client.pbz_id
         auctions = scrap_auctions_per_client(domain, client_id, updated_after, use_proxy)
+        if not auctions:
+            continue
 
         for a in auctions:
             auction_id = a.get('id')
             a_detail = scrap_auction_detail(domain, client_id, auction_id, use_proxy)
+            if not a_detail:
+                continue
 
             with Session() as ins_session:
                 ca_raw = Raw(

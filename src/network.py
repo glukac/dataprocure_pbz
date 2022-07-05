@@ -29,7 +29,8 @@ class RequestMaker:
         except requests.HTTPError as http_err:
             print(f'HTTP error occurred: {http_err}')
             print(resp.json())
-            sys.exit(1)
+            
+            return None
         except Exception as err:
             print(f'Other error occurred: {err}')
             sys.exit(1)
@@ -46,7 +47,8 @@ class RequestMaker:
         except requests.HTTPError as http_err:
             print(f'HTTP error occurred: {http_err}')
             print(resp.json())
-            sys.exit(1)
+            
+            return None
         except Exception as err:
             print(f'Other error occurred: {err}')
             sys.exit(1)
@@ -65,7 +67,8 @@ class RequestMaker:
         except requests.HTTPError as http_err:
             print(f'HTTP error occurred: {http_err}')
             print(resp.json())
-            sys.exit(1)
+            
+            return None
         except Exception as err:
             print(f'Other error occurred: {err}')
             sys.exit(1)
@@ -84,7 +87,8 @@ class RequestMaker:
         except requests.HTTPError as http_err:
             print(f'HTTP error occurred: {http_err}')
             print(resp.json())
-            sys.exit(1)
+            
+            return None
         except Exception as err:
             print(f'Other error occurred: {err}')
             sys.exit(1)
@@ -103,7 +107,8 @@ class RequestMaker:
         except requests.HTTPError as http_err:
             print(f'HTTP error occurred: {http_err}')
             print(resp.json())
-            sys.exit(1)
+            
+            return None
         except Exception as err:
             print(f'Other error occurred: {err}')
             sys.exit(1)
@@ -122,7 +127,8 @@ class RequestMaker:
         except requests.HTTPError as http_err:
             print(f'HTTP error occurred: {http_err}')
             print(resp.json())
-            sys.exit(1)
+            
+            return None
         except Exception as err:
             print(f'Other error occurred: {err}')
             sys.exit(1)
