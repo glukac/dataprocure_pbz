@@ -157,7 +157,7 @@ AS SELECT uuid_generate_v4() AS id,
     nrc.ipo AS client_ipo,
     nrca.client_pbz_id,
     nra.body -> 'name'::text AS name,
-    (nra.body ->> 'categoryId'::text)::integer AS category_id,
+    (nra.body ->> 'categoryId'::text)::integer AS category_pbz_id,
     (nra.body ->> 'template'::text)::integer AS template_id,
     nra.body ->> 'templateName'::text AS template_name,
     (nra.body -> 'isTemplate'::text)::boolean AS is_template,
@@ -206,10 +206,7 @@ AS SELECT uuid_generate_v4() AS id,
     (nra.body ->> 'worstTotalBid'::text)::numeric AS worst_total_bid,
     (nra.body ->> 'timeInvitationToEndRound'::text)::numeric AS time_invitation_to_end_round,
     (nra.body ->> 'changeTime'::text)::timestamp without time zone AS change_time,
-    nra.body -> 'currencies'::text AS currencies,
-    nra.body -> 'items'::text AS items,
-    nra.body -> 'rounds'::text AS rounds,
-    nra.body -> 'specifications'::text AS specifications
+    nra.body -> 'currencies'::text AS currencies
    FROM pbz.newest_raw_auctions nra
      JOIN pbz.newest_raw_client_auction nrca ON nra.domain::text = nrca.domain::text AND nra.pbz_id = nrca.auction_pbz_id
      JOIN pbz.newest_raw_clients nrc ON nrca.domain::text = nrc.domain::text AND nrca.client_pbz_id = nrc.pbz_id
@@ -233,4 +230,57 @@ AS WITH auction_participants AS (
     ap.auction_pbz_id
    FROM auction_participants ap
      JOIN pbz.participant p ON ap.domain::text = p.domain::text AND (ap.participant -> 'participantId'::text)::numeric = p.participant_pbz_id::numeric
+WITH DATA;
+
+
+-- pbz.auction_bid source
+
+CREATE MATERIALIZED VIEW pbz.auction_bid
+TABLESPACE pg_default
+AS WITH auction_bids AS (
+         SELECT jsonb_array_elements(nra.body -> 'bidHistory'::text) AS bid,
+            nra.domain,
+            nra.pbz_id AS auction_pbz_id
+           FROM pbz.newest_raw_auctions nra
+        )
+ SELECT ab.domain,
+    ab.auction_pbz_id,
+    ((ab.bid -> 'value'::text)::text)::numeric AS value,
+    ((ab.bid -> 'itemId'::text)::text)::numeric AS item_pbz_id,
+    ((ab.bid -> 'participantId'::text)::text)::numeric AS participant_pbz_id,
+    (ab.bid ->> 'time'::text)::timestamp with time zone AS "time"
+   FROM auction_bids ab
+WITH DATA;
+
+
+-- pbz.auction_item source
+
+CREATE MATERIALIZED VIEW pbz.auction_item
+TABLESPACE pg_default
+AS WITH auction_items AS (
+         SELECT jsonb_array_elements(nra.body -> 'items'::text) AS item,
+            nra.domain,
+            nra.pbz_id AS auction_pbz_id
+           FROM pbz.newest_raw_auctions nra
+        )
+ SELECT ai.domain,
+    ai.auction_pbz_id,
+    ((ai.item -> 'id'::text)::text)::numeric AS item_pbz_id,
+    ai.item ->> 'code'::text AS code,
+    ai.item -> 'name'::text AS name,
+    ai.item -> 'unit'::text AS unit,
+    ((ai.item -> 'order'::text)::text)::numeric AS "order",
+    ((ai.item -> 'amount'::text)::text)::numeric AS amount,
+    (ai.item -> 'isActive'::text)::boolean AS is_active,
+        CASE
+            WHEN (ai.item ->> 'lastPrice'::text) <> 'null'::text THEN ai.item ->> 'lastPrice'::text
+            ELSE NULL::text
+        END::numeric AS last_price,
+    ((ai.item -> 'priceUnits'::text)::text)::numeric AS price_units,
+    (ai.item -> 'isCountable'::text)::boolean AS is_countable,
+        CASE
+            WHEN (ai.item ->> 'startingPrice'::text) <> 'null'::text THEN ai.item ->> 'startingPrice'::text
+            ELSE NULL::text
+        END::numeric AS starting_price
+   FROM auction_items ai
 WITH DATA;
